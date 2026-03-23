@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "CeWLeR",
+  "version": "1.0.0",
+  "description": "Custom Word List generator Redefined - build wordlists from pages you browse",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["lib/constants.js", "lib/scope.js", "lib/extractor.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": []
+}

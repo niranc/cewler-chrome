@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CeWLeR</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header>
+      <h1>CeWLeR</h1>
+      <p class="tagline">Custom Word List generator Redefined</p>
+    </header>
+
+    <section class="scope">
+      <label>Scope (start URLs / domains)</label>
+      <div id="scopeList" class="scope-list"></div>
+      <div class="scope-actions">
+        <button type="button" id="scopeAdd" class="btn-icon" title="Add domain">+</button>
+        <button type="button" id="scopeRemove" class="btn-icon" title="Remove last">−</button>
+      </div>
+    </section>
+
+    <section class="mode-section">
+      <h2 class="section-title">Passive</h2>
+      <p class="section-desc">Parse pages in your current tabs as you browse. No new tabs, no extra HTTP requests — only what you already load.</p>
+      <label class="switch">
+        <input type="checkbox" id="enabled" />
+        <span class="slider">Enable passive collection</span>
+      </label>
+    </section>
+
+    <section class="mode-section active-crawl">
+      <h2 class="section-title">Active</h2>
+      <p class="section-desc">Opens background tab(s) and navigates the site automatically (threads + depth). Use this to crawl without clicking every link yourself.</p>
+      <button id="autoCrawlBtn" type="button" class="secondary full-width">Start active crawl</button>
+    </section>
+
+    <details class="options">
+      <summary>Options (cewler equivalent)</summary>
+      <div class="options-grid">
+        <label>
+          <input type="number" id="depth" min="0" value="5" />
+          Depth (0 = unlimited, max path segments to crawl)
+        </label>
+        <label>
+          <input type="number" id="crawl_threads" min="1" max="10" value="3" />
+          Crawl threads (tabs in parallel)
+        </label>
+        <label>
+          <select id="subdomain_strategy">
+            <option value="exact">exact – same (sub)domain only</option>
+            <option value="children">children – domain + subdomains</option>
+            <option value="all">all – entire registrable domain</option>
+          </select>
+        </label>
+        <label>
+          <input type="number" id="min_word_length" min="1" value="6" />
+          Min word length
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="include_css" />
+          Include CSS (&lt;style&gt; and .css files)
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="include_js" />
+          Include JavaScript (&lt;script&gt; and .js)
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="lowercase" checked />
+          Lowercase all words
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="without_numbers" checked />
+          Exclude words containing numbers
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="output_emails" />
+          Export emails (separate file)
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="output_urls" />
+          Export visited URLs
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="verbose" />
+          Verbose
+        </label>
+      </div>
+    </details>
+
+    <section class="stats">
+      <p><strong>Words:</strong> <span id="statWords">0</span></p>
+      <p><strong>Emails:</strong> <span id="statEmails">0</span></p>
+      <p><strong>URLs:</strong> <span id="statUrls">0</span></p>
+    </section>
+
+    <section class="crawled-urls">
+      <label>Crawled URLs (<span id="statUrlsLabel">0</span>)</label>
+      <div id="crawledUrlList" class="crawled-url-list"></div>
+      <div id="urlPagination" class="url-pagination">
+        <button type="button" id="urlPrev" class="btn-icon">←</button>
+        <span id="urlPageInfo">Page 1 / 1</span>
+        <button type="button" id="urlNext" class="btn-icon">→</button>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="exportBtn">Export (wordlist + emails + urls)</button>
+      <button id="clearBtn" class="secondary">Clear data</button>
+    </section>
+
+    <p class="hint"><strong>Passive</strong> works on pages you open yourself (reload the tab once after enabling if stats stay at 0). <strong>Active</strong> opens crawl tabs — click Stop when done.</p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

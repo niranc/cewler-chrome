@@ -1,42 +1,48 @@
-# CeWLeR – Extension Chrome
+# CeWLeR — Chrome extension
 
-Extension Chrome qui reprend la logique de [CeWLeR](https://github.com/roys/cewler) : génération de listes de mots (wordlist) à partir du contenu des pages. **Aucune requête HTTP** : l’extension utilise uniquement les pages que vous ouvrez dans le navigateur (périmètre défini par une URL de départ).
+Browser companion to [CeWLeR](https://github.com/roys/cewler): build a **wordlist** (plus emails / visited URLs) from page text. Data is extracted from what loads in Chrome — **no separate HTTP client** for passive mode.
 
-## Installation
+## Install
 
-1. Ouvrir `chrome://extensions/`
-2. Activer **Mode développeur**
-3. Cliquer sur **Charger l’extension non empaquetée**
-4. Sélectionner le dossier `extension` de ce dépôt
+`chrome://extensions/` → **Developer mode** → **Load unpacked** → select this `extension` folder.
 
-## Utilisation
+## What it does
 
-1. Cliquer sur l’icône de l’extension.
-2. **Périmètre** : saisir l’URL de départ (ex. `https://example.com`). Seules les pages dont l’URL est dans ce périmètre seront analysées.
-3. **Activer la collecte** : cocher pour activer. Dès que vous naviguez sur des pages du périmètre, le contenu (texte, e-mails) est extrait et ajouté au dictionnaire.
-4. **Options** (équivalent des options cewler) :
-   - **Profondeur** : profondeur de chemin max (0 = illimitée)
-   - **Stratégie sous-domaines** : `exact` / `children` / `all`
-   - **Longueur min. des mots**, **Inclure CSS**, **Inclure JS**, **Minuscules**, **Sans chiffres**, **Exporter e-mails**, **Exporter URLs**
-5. **Exporter** : télécharge les fichiers wordlist, e-mails et URLs (selon les options).
-6. **Vider les données** : remet à zéro les mots/e-mails/URLs collectés.
+1. You define **scope** (one or more start URLs / domains).
+2. Only pages that match the scope (host + subdomain strategy + path depth) are processed.
+3. Words and emails are merged into storage; you **Export** as `.txt` files.
 
-Les paramètres sont conservés dans `chrome.storage.local` et réutilisés à chaque chargement de page dans le périmètre.
+## Passive vs Active
 
-## Fichiers
+| Mode | What happens |
+|------|----------------|
+| **Passive** | With *Enable passive collection* on, each page you open yourself in a normal tab is parsed. No extra tabs. Re-parses when you change settings or on many SPA navigations. |
+| **Active** | *Start active crawl* opens **N background tabs** (`Crawl threads`) and walks the queue of in-scope URLs (respecting **Depth**). Stop with *Stop active crawl*. Same extraction logic; the browser loads pages for you. |
 
-- `manifest.json` – Manifest V3
-- `background.js` – Agrégation des données, export (téléchargement)
-- `content.js` – Injection sur toutes les URLs ; vérification du périmètre et envoi des mots/emails à la background
-- `lib/constants.js` – Constantes (regex, caractères à filtrer)
-- `lib/scope.js` – Vérification scope (sous-domaines, profondeur)
-- `lib/extractor.js` – Extraction mots/emails depuis le texte (port de la logique cewler)
-- `popup/` – Interface (champ périmètre, options, stats, export)
+Use **passive** for everyday browsing; use **active** to cover many links without clicking them manually.
 
-## Différences avec la CLI cewler
+## Default configuration
 
-- Pas de crawl actif : seules les pages que vous visitez sont prises en compte.
-- Pas de proxy / User-Agent personnalisé (contexte navigateur).
-- Pas de PDF pour l’instant (possible d’ajouter PDF.js plus tard).
-- Les fichiers exportés sont au format texte (un mot/e-mail/URL par ligne), comme la CLI.
-# cewler-chrome
+| Setting | Default |
+|---------|---------|
+| Depth (max path segments) | **5** (`0` = unlimited) |
+| Crawl threads | **3** (1–10, active mode only) |
+| Subdomain strategy | **exact** |
+| Min word length | **6** |
+| Lowercase | **on** |
+| Exclude words with digits | **on** |
+| Include CSS / JS | **off** |
+| Export emails / URLs to extra files | **off** |
+
+Settings persist in `chrome.storage.local`.
+
+## Quick use
+
+1. Add scope URL(s), enable **passive** (and/or run **active crawl**).
+2. Watch **Words / Emails / URLs** in the popup; paginate crawled URLs if needed.
+3. **Export** wordlist (and optional email/URL files if enabled in options).
+4. **Clear data** resets collected lists (and discovered URLs).
+
+---
+
+*CLI features not in the extension: proxy, custom User-Agent, PDF extraction.*
